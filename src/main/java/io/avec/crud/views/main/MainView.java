@@ -20,8 +20,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
-import io.avec.crud.views.main.MainView;
-import io.avec.crud.views.person.PersonView;
+import io.avec.crud.views.employee.EmployeeView;
 import io.avec.crud.views.department.DepartmentView;
 import io.avec.crud.views.helloworld.HelloWorldView;
 import com.vaadin.flow.theme.lumo.Lumo;
@@ -86,7 +85,7 @@ public class MainView extends AppLayout {
 
     private Component[] createMenuItems() {
         return new Tab[] {
-            createTab("Person", PersonView.class),
+            createTab("Employee", EmployeeView.class),
             createTab("Department", DepartmentView.class),
             createTab("Hello World", HelloWorldView.class)
         };

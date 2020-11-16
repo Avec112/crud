@@ -1,7 +1,7 @@
 package io.avec.crud.data.department;
 
 import io.avec.crud.data.AbstractEntity;
-import io.avec.crud.data.person.Person;
+import io.avec.crud.data.employee.Employee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,8 +18,8 @@ public class Department extends AbstractEntity {
     private String departmentName;
     private String floor;
 
-    @OneToMany(targetEntity = Person.class, mappedBy = "department")
-    private List<Person> person;
+    @OneToMany(targetEntity = Employee.class, mappedBy = "department")
+    private List<Employee> employees;
 
     public Department(String departmentName, String floor) {
         this.departmentName = departmentName;

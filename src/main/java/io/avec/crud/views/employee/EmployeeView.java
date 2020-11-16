@@ -1,37 +1,46 @@
-package io.avec.crud.views.person;
+package io.avec.crud.views.employee;
 
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import io.avec.crud.data.department.Department;
 import io.avec.crud.data.department.DepartmentRepository;
-import io.avec.crud.data.person.Person;
-import io.avec.crud.data.person.PersonRepository;
+import io.avec.crud.data.employee.Employee;
+import io.avec.crud.data.employee.EmployeeRepository;
 import io.avec.crud.views.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
 import org.vaadin.crudui.crud.CrudOperation;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.field.provider.ComboBoxProvider;
 
-@Route(value = "person", layout = MainView.class)
-@PageTitle("Person")
-@CssImport("./styles/views/person/person-view.css")
-@RouteAlias(value = "", layout = MainView.class)
-public class PersonView extends Div {
+import java.util.stream.Collectors;
 
-    public PersonView(PersonRepository personRepository, DepartmentRepository departmentRepository) {
-        setId("person-view");
+@Route(value = "employee", layout = MainView.class)
+@PageTitle("Employee")
+@CssImport("./styles/views/employee/employee-view.css")
+@RouteAlias(value = "", layout = MainView.class)
+public class EmployeeView extends Div {
+
+    public EmployeeView(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
+        setId("employee-view");
         //add(new Label("Content placeholder"));
 
-        GridCrud<Person> crud = new GridCrud<>(Person.class);
+        GridCrud<Employee> crud = new GridCrud<>(Employee.class);
+
+        ComboBox<String> filter = new ComboBox<>();
+        filter.setDataProvider(new ListDataProvider<>(departmentRepository.findAll().stream().map(Department::getDepartmentName).collect(Collectors.toList())));
+        filter.setClearButtonVisible(true);
+        filter.setPlaceholder("Filter by department");
 
         // additional components
-        TextField filter = new TextField();
-        filter.setPlaceholder("Filter by name");
-        filter.setClearButtonVisible(true);
+//        TextField filter = new TextField();
+//        filter.setPlaceholder("Filter by department");
+//        filter.setClearButtonVisible(true);
         crud.getCrudLayout().addFilterComponent(filter);
 
         // grid configuration
@@ -51,10 +60,11 @@ public class PersonView extends Div {
 
         // logic configuration
         crud.setOperations(
-                () -> personRepository.findByFirstNameContainingIgnoreCase(filter.getValue()),
-                personRepository::save,
-                personRepository::save,
-                personRepository::delete
+                () -> employeeRepository.findByDepartmentDepartmentNameContainingIgnoreCase(filter.getValue() == null? "": filter.getValue()),
+//                () -> employeeRepository.findByFirstNameContainingIgnoreCase(filter.getValue()),
+                employeeRepository::save,
+                employeeRepository::save,
+                employeeRepository::delete
         );
 
         filter.addValueChangeListener(e -> crud.refreshGrid());
