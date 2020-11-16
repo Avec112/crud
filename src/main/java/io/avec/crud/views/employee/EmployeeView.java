@@ -6,6 +6,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.TextRenderer;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import io.avec.crud.data.department.Department;
@@ -32,15 +33,15 @@ public class EmployeeView extends Div {
 
         GridCrud<Employee> crud = new GridCrud<>(Employee.class);
 
-        ComboBox<String> filter = new ComboBox<>();
-        filter.setDataProvider(new ListDataProvider<>(departmentRepository.findAll().stream().map(Department::getDepartmentName).collect(Collectors.toList())));
-        filter.setClearButtonVisible(true);
-        filter.setPlaceholder("Filter by department");
+//        ComboBox<String> filter = new ComboBox<>();
+//        filter.setDataProvider(new ListDataProvider<>(departmentRepository.findAll().stream().map(Department::getDepartmentName).collect(Collectors.toList())));
+//        filter.setClearButtonVisible(true);
+//        filter.setPlaceholder("Filter by department");
 
         // additional components
-//        TextField filter = new TextField();
-//        filter.setPlaceholder("Filter by department");
-//        filter.setClearButtonVisible(true);
+        TextField filter = new TextField();
+        filter.setPlaceholder("Filter by department");
+        filter.setClearButtonVisible(true);
         crud.getCrudLayout().addFilterComponent(filter);
 
         // grid configuration
@@ -60,7 +61,8 @@ public class EmployeeView extends Div {
 
         // logic configuration
         crud.setOperations(
-                () -> employeeRepository.findByDepartmentDepartmentNameContainingIgnoreCase(filter.getValue() == null? "": filter.getValue()),
+                () -> employeeRepository.findByDepartmentDepartmentNameContainingIgnoreCase(filter.getValue()),
+//                () -> employeeRepository.findByDepartmentDepartmentNameContainingIgnoreCase(filter.getValue() == null? "": filter.getValue()),
 //                () -> employeeRepository.findByFirstNameContainingIgnoreCase(filter.getValue()),
                 employeeRepository::save,
                 employeeRepository::save,
@@ -68,6 +70,7 @@ public class EmployeeView extends Div {
         );
 
         filter.addValueChangeListener(e -> crud.refreshGrid());
+        filter.setValueChangeMode(ValueChangeMode.EAGER);
     }
 
 }
