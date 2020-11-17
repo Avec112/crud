@@ -24,7 +24,7 @@ public class DepartmentView extends Div {
 
 
         TextField filter = new TextField();
-        filter.setPlaceholder("Filter by departments");
+        filter.setPlaceholder("Filter by department");
         filter.setClearButtonVisible(true);
         crud.getCrudLayout().addFilterComponent(filter);
 

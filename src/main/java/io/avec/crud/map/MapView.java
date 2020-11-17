@@ -20,18 +20,14 @@ public class MapView extends Div {
 
     public MapView() {
         setId("map-view");
-        Label label = new Label("Virker det her da?");
-        add(label);
 
         MapOptions options = new DefaultMapOptions();
         options.setCenter(new LatLng(47.070121823, 19.204101562500004));
         options.setZoom(7);
         LeafletMap leafletMap = new LeafletMap(options );
         leafletMap.setBaseUrl("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
+//        leafletMap.getStyle().set("position", "absolute"); // overriding
         add(leafletMap);
-
-        Label label2 = new Label("Etter...");
-        add(label2);
 
     }
 }

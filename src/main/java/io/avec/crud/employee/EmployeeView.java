@@ -35,13 +35,13 @@ public class EmployeeView extends Div {
         crud.getCrudLayout().addFilterComponent(filter);
 
         // grid configuration
-        crud.getGrid().setColumns("firstName", "department.departmentName");
+        crud.getGrid().setColumns("firstName", "email", "department.departmentName");
         crud.getGrid().setColumnReorderingAllowed(true);
 
         // form configuration
 //        crud.getCrudFormFactory().setUseBeanValidation(true); // requires JSR-303 Bean Validation implementation not found on the classpath
-        crud.getCrudFormFactory().setVisibleProperties(CrudOperation.ADD,"firstName", "department");
-        crud.getCrudFormFactory().setVisibleProperties("firstName", "department");
+        crud.getCrudFormFactory().setVisibleProperties(CrudOperation.ADD,"firstName", "email", "department");
+        crud.getCrudFormFactory().setVisibleProperties("firstName", "email", "department");
         crud.getCrudFormFactory().setFieldProvider("department", new ComboBoxProvider<>(departmentRepository.findAll()));
         crud.getCrudFormFactory().setFieldProvider("department", new ComboBoxProvider<>("Department", departmentRepository.findAll(), new TextRenderer<>(Department::getDepartmentName), Department::getDepartmentName));
 

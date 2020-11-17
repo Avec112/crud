@@ -29,10 +29,10 @@ public class DataGenerator {
             repository.saveAll(departments);
 
             List<Employee> employees = Arrays.asList(
-                    new Employee("John", departments.get(0)),  // Sales
-                    new Employee("Susan", departments.get(1)), // Marketing
-                    new Employee("Lori", departments.get(1)), // Marketing
-                    new Employee("Paul", departments.get(2))   // Accounting
+                    new Employee("John", "john@mail.org", departments.get(0)),  // Sales
+                    new Employee("Susann", "susann@mail.org", departments.get(1)), // Marketing
+                    new Employee("Lori", "lori@mail.org", departments.get(1)), // Marketing
+                    new Employee("Paul", "paul@mail.org", departments.get(2))   // Accounting
             );
             log.debug("Created {} employees.", employees.size());
             employeeRepository.saveAll(employees);
