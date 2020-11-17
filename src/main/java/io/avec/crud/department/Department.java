@@ -1,7 +1,7 @@
-package io.avec.crud.data.department;
+package io.avec.crud.department;
 
 import io.avec.crud.data.AbstractEntity;
-import io.avec.crud.data.employee.Employee;
+import io.avec.crud.employee.Employee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

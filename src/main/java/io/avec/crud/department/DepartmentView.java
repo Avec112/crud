@@ -1,20 +1,16 @@
-package io.avec.crud.views.department;
+package io.avec.crud.department;
 
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import io.avec.crud.data.department.Department;
-import io.avec.crud.data.department.DepartmentRepository;
-import io.avec.crud.data.employee.Employee;
-import io.avec.crud.views.main.MainView;
+import io.avec.crud.main.MainView;
 import org.vaadin.crudui.crud.CrudOperation;
 import org.vaadin.crudui.crud.impl.GridCrud;
-import org.vaadin.crudui.form.impl.field.provider.ComboBoxProvider;
 
 @Route(value = "department", layout = MainView.class)
 @PageTitle("Department")
@@ -28,7 +24,7 @@ public class DepartmentView extends Div {
 
 
         TextField filter = new TextField();
-        filter.setPlaceholder("Filter by department");
+        filter.setPlaceholder("Filter by departments");
         filter.setClearButtonVisible(true);
         crud.getCrudLayout().addFilterComponent(filter);
 
@@ -54,6 +50,9 @@ public class DepartmentView extends Div {
 
         filter.addValueChangeListener(e -> crud.refreshGrid());
         filter.setValueChangeMode(ValueChangeMode.EAGER);
+        filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
+        filter.focus();
+//        filter.addFocusShortcut(Key.KEY_S, KeyModifier.CONTROL, KeyModifier.SHIFT);
     }
 
 }

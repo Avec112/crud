@@ -1,4 +1,4 @@
-package io.avec.crud.views.main;
+package io.avec.crud.main;
 
 import java.util.Optional;
 
@@ -20,10 +20,11 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
-import io.avec.crud.views.employee.EmployeeView;
-import io.avec.crud.views.department.DepartmentView;
-import io.avec.crud.views.helloworld.HelloWorldView;
+import io.avec.crud.employee.EmployeeView;
+import io.avec.crud.department.DepartmentView;
+import io.avec.crud.helloworld.HelloWorldView;
 import com.vaadin.flow.theme.lumo.Lumo;
+import io.avec.crud.map.MapView;
 
 /**
  * The main view is a top-level placeholder for other views.
@@ -87,6 +88,7 @@ public class MainView extends AppLayout {
         return new Tab[] {
             createTab("Employee", EmployeeView.class),
             createTab("Department", DepartmentView.class),
+            createTab("Map", MapView.class),
             createTab("Hello World", HelloWorldView.class)
         };
     }

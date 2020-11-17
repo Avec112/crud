@@ -1,4 +1,4 @@
-package io.avec.crud.data.department;
+package io.avec.crud.department;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,25 +1,21 @@
-package io.avec.crud.views.employee;
+package io.avec.crud.employee;
 
-import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.TextRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import io.avec.crud.data.department.Department;
-import io.avec.crud.data.department.DepartmentRepository;
-import io.avec.crud.data.employee.Employee;
-import io.avec.crud.data.employee.EmployeeRepository;
-import io.avec.crud.views.main.MainView;
+import io.avec.crud.department.Department;
+import io.avec.crud.department.DepartmentRepository;
+import io.avec.crud.main.MainView;
 import com.vaadin.flow.router.RouteAlias;
 import org.vaadin.crudui.crud.CrudOperation;
 import org.vaadin.crudui.crud.impl.GridCrud;
 import org.vaadin.crudui.form.impl.field.provider.ComboBoxProvider;
-
-import java.util.stream.Collectors;
 
 @Route(value = "employee", layout = MainView.class)
 @PageTitle("Employee")
@@ -29,14 +25,8 @@ public class EmployeeView extends Div {
 
     public EmployeeView(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
         setId("employee-view");
-        //add(new Label("Content placeholder"));
 
         GridCrud<Employee> crud = new GridCrud<>(Employee.class);
-
-//        ComboBox<String> filter = new ComboBox<>();
-//        filter.setDataProvider(new ListDataProvider<>(departmentRepository.findAll().stream().map(Department::getDepartmentName).collect(Collectors.toList())));
-//        filter.setClearButtonVisible(true);
-//        filter.setPlaceholder("Filter by department");
 
         // additional components
         TextField filter = new TextField();
@@ -71,6 +61,7 @@ public class EmployeeView extends Div {
 
         filter.addValueChangeListener(e -> crud.refreshGrid());
         filter.setValueChangeMode(ValueChangeMode.EAGER);
+        filter.addFocusShortcut(Key.KEY_F, KeyModifier.CONTROL);
     }
 
 }

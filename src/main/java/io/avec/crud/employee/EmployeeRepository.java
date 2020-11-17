@@ -1,4 +1,4 @@
-package io.avec.crud.data.employee;
+package io.avec.crud.employee;
 
 
 import org.springframework.data.jpa.repository.JpaRepository;
