@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @NoArgsConstructor
@@ -15,6 +17,8 @@ import java.util.List;
 @Getter
 @Entity
 public class Department extends AbstractEntity {
+    @NotNull
+    @Column(unique = true)
     private String departmentName;
     private String floor;
 

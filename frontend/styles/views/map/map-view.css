@@ -9,5 +9,5 @@
 }
 
 leaflet-map#template {
-    position: absolute;
+    position: fixed;
 }

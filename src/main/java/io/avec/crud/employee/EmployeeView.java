@@ -20,7 +20,7 @@ import org.vaadin.crudui.form.impl.field.provider.ComboBoxProvider;
 @Route(value = "employee", layout = MainView.class)
 @PageTitle("Employee")
 @CssImport("./styles/views/employee/employee-view.css")
-@RouteAlias(value = "", layout = MainView.class)
+//@RouteAlias(value = "", layout = MainView.class)
 public class EmployeeView extends Div {
 
     public EmployeeView(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
