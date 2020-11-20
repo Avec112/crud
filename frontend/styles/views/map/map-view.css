@@ -11,3 +11,9 @@
 leaflet-map#template {
     position: fixed;
 }
+
+/* Marker dialog */
+.marker-dialog {
+    margin: 0;
+    padding: 0;
+}
