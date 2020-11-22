@@ -5,7 +5,10 @@ import com.vaadin.addon.leaflet4vaadin.layer.events.MouseEvent;
 import com.vaadin.addon.leaflet4vaadin.layer.map.options.DefaultMapOptions;
 import com.vaadin.addon.leaflet4vaadin.layer.map.options.MapOptions;
 import com.vaadin.addon.leaflet4vaadin.layer.ui.marker.Marker;
+import com.vaadin.addon.leaflet4vaadin.plugins.heatmap.HeatLayer;
+import com.vaadin.addon.leaflet4vaadin.plugins.heatmap.HeatLayerOptions;
 import com.vaadin.addon.leaflet4vaadin.types.LatLng;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -14,10 +17,13 @@ import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -25,6 +31,9 @@ import com.vaadin.flow.router.RouteAlias;
 import io.avec.crud.main.MainView;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @RouteAlias(value = "", layout = MainView.class) // default
@@ -37,7 +46,15 @@ public class MapView extends Div {
     private final TextField latField = new TextField(null,"Mouse latitude");
     private final TextField lonField = new TextField(null,"Mouse longitude");
     private final TextField divField = new TextField(null,"Testing purposes");
-    private final Button testButton = new Button("Button");
+    private LeafletMap map;
+    private final Button osloButton = new Button("Oslo");
+    private final Button hamburgButton = new Button("Hamburg");
+    private final Button rioButton = new Button("Rio de Janeiro");
+    private final LatLng oslo = new LatLng(59.914800, 10.749178);
+    private final LatLng hamburg = new LatLng(53.51418452077113, 10.04150390625);
+    private final LatLng rio = new LatLng(-22.948276856880895, -43.1982421875);
+    private final Checkbox heatLayerCheckbox = new Checkbox("Heatmap (random points)");
+    private HeatLayer heatLayer;
 //    private final LayerGroup group1 = new LayerGroup();
 
     @SneakyThrows
@@ -45,15 +62,13 @@ public class MapView extends Div {
         setId("map-view");
 
         createTop();
-
-        LeafletMap leafletMap = getLeafletMap();
-
+        map = getLeafletMap();
         // event
-        leafletMap.onClick(e -> createMarker(e.getLatLng(), leafletMap));
+        map.onClick(e -> createMarker(e.getLatLng(), map));
 
 //        Notification.show("Map ready.", 3000, Notification.Position.TOP_CENTER);
 
-        addContextMenu(leafletMap);
+        addContextMenu(map);
 
     }
 
@@ -77,21 +92,20 @@ public class MapView extends Div {
 
     private LeafletMap getLeafletMap() {
         MapOptions options = new DefaultMapOptions();
-        options.setCenter(new LatLng(59.914800, 10.749178));
+        options.setCenter(oslo);
         options.setMinZoom(2);
         options.setMaxZoom(18);
         options.setZoom(7);
         zoomField.setValue("Current zoom: " + options.getZoom() + ", min: 2, max: 18");
-        LeafletMap map = new LeafletMap(options );
+        map = new LeafletMap(options );
         // OSM: Uses Spherical Mercator projection aka EPSG:3857
         map.setBaseUrl("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
         add(map);
 
-
-
         //map.onClick(e -> createMarker(e.getLatLng(), map));
         map.onZoom(e -> map.getZoom().thenAccept(this::logZoom));
         map.onMouseMove(this::logLatLon);
+
 
         return map;
     }
@@ -116,13 +130,70 @@ public class MapView extends Div {
         //            });
         //            dialog.add(remove, cancel);
         //            dialog.open();
-        marker.onDoubleClick(this::removeMarker);
-        marker.onMove(e -> {
+//        marker.onDoubleClick(this::removeMarker); // todo does not work when onClick displays Dialog
+        //marker.onMove(e -> {
 //            e.getTarget().setPopupContent(formatLatLngOnTwoLines(e.getLatLng()));
-            marker.setTooltipContent(formatLatLngOnTwoLines(e.getLatLng()));
-        });
+//            marker.setTooltipContent(formatLatLngOnTwoLines(e.getLatLng()));
+//        });
         marker.addTo(leafletMap);
         //removeMarker(marker);
+    }
+
+    private void createHeatLayer(AbstractField.ComponentValueChangeEvent<Checkbox, Boolean> e) {
+        if(e.getValue()) {
+            HeatLayerOptions options = new HeatLayerOptions();
+//            options.setMinOpacity(1); // 0,5
+//            options.setMax(1);
+            options.setMaxZoom(18);
+//            options.setBlur(15);
+            heatLayer = new HeatLayer(options);
+            heatLayer.setLatLngs(randomLatLngs());
+            /*heatLayer.setLatLngs(Arrays.asList(
+                    oslo,
+                    new LatLng(59.931280289726914, 10.71922302246094), // Frogner i Oslo
+                    new LatLng(59.83274004661259, 10.438385009765627), // Asker
+                    new LatLng(59.7377140398859, 10.210418701171877), // Drammen
+                    hamburg,
+                    rio
+            ));*/
+//            map.onMove(event -> heatLayer.redraw());
+            heatLayer.addTo(map);
+            Notification.show("Heatmap layer added.");
+        } else {
+            heatLayer.remove();
+            Notification.show("Heatmap layer removed.");
+        }
+    }
+
+    private static List<LatLng> randomLatLngs() {
+        List<LatLng> heatmapData = new ArrayList<>();
+
+        // South Norway
+        for (int i = 0; i++ < 10;) {
+            double altitude = Math.random();
+            double lat = (Math.random() * 4) + 58;
+            double lng = (Math.random() * 4) + 9;
+            heatmapData.add(LatLng.latlng(lat, lng, altitude));
+        }
+
+        // Germany
+        for (int i = 0; i++ < 6;) {
+            double altitude = Math.random();
+            double lat = (Math.random() * 4) + 51;
+            double lng = (Math.random() * 3) + 6;
+            heatmapData.add(LatLng.latlng(lat, lng, altitude));
+        }
+
+        // France
+        for (int i = 0; i++ < 7;) {
+            double altitude = Math.random();
+            double lat = (Math.random() * 4) + 47;
+            double lng = (Math.random() * 4) + 3;
+            heatmapData.add(LatLng.latlng(lat, lng, altitude));
+        }
+
+
+        return heatmapData;
     }
 
     private void createPoint(MouseEvent mouseEvent) {
@@ -137,22 +208,26 @@ public class MapView extends Div {
         TextField lng = new TextField("Longitude");
         lng.setReadOnly(true);
         lng.setValue(mouseEvent.getLatLng().getLng().toString());
+
+        // add components
+        formLayout.add(textField, textField2, lat, lng);
+
         Button save = new Button("Save", e -> {
-            Notification.show("\"Lagrer punkt\" (kan tenkes)");
+            Notification.show("\"Marker saved\" (not really)");
             dialog.close();
         });
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        Button close = new Button("Close", e -> dialog.close());
-        Button delete = new Button("Delete", new Icon(VaadinIcon.TRASH), e -> {
-            Notification.show("Marker deleted.");
+        Button close = new Button("Cancel", e -> dialog.close());
+        Button delete = new Button("Remove marker", new Icon(VaadinIcon.TRASH), e -> {
+            Notification.show("Marker remove.");
+            mouseEvent.getTarget().remove(); // remove marker
             dialog.close();
         });
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
 
-        formLayout.add(textField, textField2, lat, lng, delete);
-        HorizontalLayout horizontalLayout = new HorizontalLayout(save, close);
-        //horizontalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        HorizontalLayout horizontalLayout = new HorizontalLayout(save, delete, close);
+        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         dialog.add(formLayout, horizontalLayout);
         dialog.open();
     }
@@ -180,19 +255,23 @@ public class MapView extends Div {
     }
 
     private void createTop() {
-        FormLayout formLayout = new FormLayout();
-        formLayout.add(latField);
-        formLayout.add(lonField);
-        formLayout.add(zoomField);
-        formLayout.add(divField);
-        formLayout.add(testButton);
 
-        testButton.addClickListener(event -> {
-//            this.removeMarker(null);
-//            log.debug("testButton clicked");
-            Notification.show("Button clicked.");
-        });
-        add(formLayout);
+        FormLayout formLayout = new FormLayout();
+        formLayout.add(latField, lonField);
+        formLayout.add(zoomField, divField);
+
+        HorizontalLayout buttonsLayout = new HorizontalLayout(new Label("Fly to"), osloButton, hamburgButton, rioButton);
+        buttonsLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        HorizontalLayout heatLayerLayout = new HorizontalLayout(heatLayerCheckbox);
+
+        // fly to TODO flight seems to be off after a while
+        osloButton.addClickListener(e -> map.flyTo(oslo));
+        hamburgButton.addClickListener(e -> map.flyTo(hamburg));
+        rioButton.addClickListener(e -> map.flyTo(rio));
+        heatLayerCheckbox.addValueChangeListener(this::createHeatLayer);
+
+        VerticalLayout top = new VerticalLayout(formLayout, buttonsLayout, heatLayerLayout);
+        add(top);
     }
 
     protected void logLatLon(MouseEvent e) {
