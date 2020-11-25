@@ -61,14 +61,20 @@ public class MapView extends Div {
     public MapView() {
         setId("map-view");
 
-        createTop();
+        VerticalLayout layout = new VerticalLayout();
+        layout.setSizeFull();
+        layout.add(createTop());
         map = getLeafletMap();
+
+        layout.add(map);
         // event
         map.onClick(e -> createMarker(e.getLatLng(), map));
 
 //        Notification.show("Map ready.", 3000, Notification.Position.TOP_CENTER);
 
         addContextMenu(map);
+
+        add(layout);
 
     }
 
@@ -100,7 +106,7 @@ public class MapView extends Div {
         map = new LeafletMap(options );
         // OSM: Uses Spherical Mercator projection aka EPSG:3857
         map.setBaseUrl("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png");
-        add(map);
+//        add(map);
 
         //map.onClick(e -> createMarker(e.getLatLng(), map));
         map.onZoom(e -> map.getZoom().thenAccept(this::logZoom));
@@ -254,7 +260,7 @@ public class MapView extends Div {
 //        dialog.open();
     }
 
-    private void createTop() {
+    private VerticalLayout createTop() {
 
         FormLayout formLayout = new FormLayout();
         formLayout.add(latField, lonField);
@@ -270,8 +276,9 @@ public class MapView extends Div {
         rioButton.addClickListener(e -> map.flyTo(rio));
         heatLayerCheckbox.addValueChangeListener(this::createHeatLayer);
 
-        VerticalLayout top = new VerticalLayout(formLayout, buttonsLayout, heatLayerLayout);
-        add(top);
+        VerticalLayout layout = new VerticalLayout(formLayout, buttonsLayout, heatLayerLayout);
+        layout.setId("map-header");
+        return layout;
     }
 
     protected void logLatLon(MouseEvent e) {

@@ -1,19 +1,21 @@
 #map-view {
-    display: inline-block;
-    padding: var(--lumo-space-m) var(--lumo-space-l);
-}
-
-:host {
-    display: block;
-    padding: var(--lumo-space-m) var(--lumo-space-l);
-}
-
-leaflet-map#template {
-    position: fixed;
+    height: 100%;
+    width: 100%;
 }
 
 /* Marker dialog */
 .marker-dialog {
     margin: 0;
     padding: 0;
+}
+
+#map-header {
+    padding: 0;
+}
+
+/*
+    Overriding #map z-index: 400
+*/
+#overlay {
+    z-index: 10000;
 }
