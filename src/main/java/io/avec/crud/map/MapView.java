@@ -22,6 +22,7 @@ import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@RouteAlias(value = "", layout = MainView.class) // default
+//@RouteAlias(value = "", layout = MainView.class) // default
 @Route(value = "map", layout = MainView.class)
 @PageTitle("Map")
 @CssImport("./styles/views/map/map-view.css")
@@ -60,9 +61,13 @@ public class MapView extends Div {
     @SneakyThrows
     public MapView() {
         setId("map-view");
+        setSizeFull();
 
         VerticalLayout layout = new VerticalLayout();
         layout.setSizeFull();
+        layout.setPadding(false);
+        layout.setMargin(false);
+
         layout.add(createTop());
         map = getLeafletMap();
 
@@ -277,7 +282,7 @@ public class MapView extends Div {
         heatLayerCheckbox.addValueChangeListener(this::createHeatLayer);
 
         VerticalLayout layout = new VerticalLayout(formLayout, buttonsLayout, heatLayerLayout);
-        layout.setId("map-header");
+//        layout.setId("map-header");
         return layout;
     }
 

@@ -6,11 +6,11 @@ import org.vaadin.artur.helpers.CrudService;
 
 @Getter
 @Service
-public class EmployeeService extends CrudService<Employee, Integer> {
+public class EmployeeCrudService extends CrudService<Employee, Integer> {
 
     private EmployeeRepository repository;
 
-    public EmployeeService(EmployeeRepository repository) {
+    public EmployeeCrudService(EmployeeRepository repository) {
         this.repository = repository;
     }
 }

@@ -18,7 +18,7 @@ public class Department {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
 
     @NotNull
     @Column(unique = true)
@@ -50,8 +50,8 @@ public class Department {
         this.floor = floor;
     }
 
-    @Override
-    public String toString() {
-        return departmentName;
-    }
+//    @Override
+//    public String toString() {
+//        return departmentName;
+//    }
 }

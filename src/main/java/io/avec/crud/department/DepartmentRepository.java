@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface DepartmentRepository extends JpaRepository<Department, Integer> {
     List<Department> findByDepartmentNameContainingIgnoreCase(String departmentName);
+    List<Department> findDistinctByDepartmentName();
 
 }
