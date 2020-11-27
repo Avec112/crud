@@ -25,17 +25,23 @@ public class DataGenerator {
                     new Department("Accounting", "3"),
                     new Department("Management", "4")
             );
+
+            departments.get(0).addEmployee(new Employee("John", "john@mail.org")); // sales
+            departments.get(1).addEmployee(new Employee("Susann", "susann@mail.org")); // marketing
+            departments.get(1).addEmployee(new Employee("Lori", "lori@mail.org")); // marketing
+            departments.get(2).addEmployee(new Employee("Paul", "paul@mail.org")); // accounting
+
             log.debug("Created {} departments.", departments.size());
             repository.saveAll(departments);
 
-            List<Employee> employees = Arrays.asList(
-                    new Employee("John", "john@mail.org", departments.get(0)),  // Sales
-                    new Employee("Susann", "susann@mail.org", departments.get(1)), // Marketing
-                    new Employee("Lori", "lori@mail.org", departments.get(1)), // Marketing
-                    new Employee("Paul", "paul@mail.org", departments.get(2))   // Accounting
-            );
-            log.debug("Created {} employees.", employees.size());
-            employeeRepository.saveAll(employees);
+//            List<Employee> employees = Arrays.asList(
+//                    new Employee("John", "john@mail.org", departments.get(0)),  // Sales
+//                    new Employee("Susann", "susann@mail.org", departments.get(1)), // Marketing
+//                    new Employee("Lori", "lori@mail.org", departments.get(1)), // Marketing
+//                    new Employee("Paul", "paul@mail.org", departments.get(2))   // Accounting
+//            );
+//            log.debug("Created {} employees.", employees.size());
+//            employeeRepository.saveAll(employees);
 
         };
     }

@@ -7,11 +7,12 @@
     <packaging>jar</packaging>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <vaadin.version>14.4.2</vaadin.version>
+        <vaadin.version>14.4.3</vaadin.version>
 
     </properties>
 
@@ -86,8 +87,8 @@
         <dependency>
             <groupId>com.vaadin</groupId>
             <!-- Replace artifactId with vaadin-core to use only free components -->
-<!--            <artifactId>vaadin</artifactId>-->
-            <artifactId>vaadin-core</artifactId>
+            <artifactId>vaadin</artifactId>
+<!--            <artifactId>vaadin-core</artifactId>-->
             <exclusions>
                 <!-- Webjars are only needed when running in Vaadin 13 compatibility mode -->
                 <exclusion>
