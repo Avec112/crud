@@ -19,10 +19,10 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
-import io.avec.crud.department.Department2View;
-import io.avec.crud.department.DepartmentView;
-import io.avec.crud.employee.EmployeeView;
-import io.avec.crud.map.MapView;
+import io.avec.crud.department.DepartmentCrudView;
+import io.avec.crud.department.DepartmentGridProView;
+import io.avec.crud.employee.EmployeeCrudView;
+import io.avec.crud.employee.EmployeeGridProView;
 
 import java.util.Optional;
 
@@ -86,10 +86,10 @@ public class MainView extends AppLayout {
 
     private Component[] createMenuItems() {
         return new Tab[] {
-                createTab("Department (GridPro)", DepartmentView.class),
-                createTab("Department (Crud-crudui)", Department2View.class),
-                createTab("Employee (Crud)", EmployeeView.class),
-                createTab("Map", MapView.class)
+                createTab("Department (GridPro)", DepartmentGridProView.class),
+                createTab("Department (Crud-crudui)", DepartmentCrudView.class),
+                createTab("Employee (GridPro)", EmployeeGridProView.class),
+                createTab("Employee (Crud)", EmployeeCrudView.class)
         };
     }
 

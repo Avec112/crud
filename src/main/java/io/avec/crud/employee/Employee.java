@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -60,4 +61,13 @@ public class Employee {
                 .toHashCode();
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("id", id)
+                .append("firstName", firstName)
+                .append("email", email)
+                .append("department", department)
+                .toString();
+    }
 }

@@ -24,10 +24,10 @@ import org.vaadin.artur.helpers.CrudServiceDataProvider;
 import java.util.Optional;
 
 @RouteAlias(value = "", layout = MainView.class)
-@Route(value = "department", layout = MainView.class)
-@PageTitle("Department")
+@Route(value = "department-grid", layout = MainView.class)
+@PageTitle("Department GridPro")
 @CssImport("./styles/views/department/department-view.css")
-public class DepartmentView extends Div {
+public class DepartmentGridProView extends Div {
 
     private final GridPro<Department> grid = new GridPro<>(Department.class);
 
@@ -41,7 +41,7 @@ public class DepartmentView extends Div {
 
     private Department department; // do not like this
 
-    public DepartmentView(DepartmentCrudService departmentService) {
+    public DepartmentGridProView(DepartmentCrudService departmentService) {
         setId("department-view");
 
         // Create UI

@@ -1,7 +1,0 @@
-
-/*
-    Overriding #map z-index: 400
-*/
-#overlay {
-    z-index: 10000;
-}

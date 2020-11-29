@@ -1,6 +1,5 @@
 package io.avec.crud.employee;
 
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.gridpro.GridPro;
@@ -14,17 +13,16 @@ import io.avec.crud.department.Department;
 import io.avec.crud.department.DepartmentRepository;
 import io.avec.crud.main.MainView;
 import lombok.extern.slf4j.Slf4j;
-import org.vaadin.artur.helpers.CrudServiceDataProvider;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Route(value = "employee", layout = MainView.class)
-@PageTitle("Employee")
+@Route(value = "employee-grid", layout = MainView.class)
+@PageTitle("Employee GridPro")
 @CssImport("./styles/views/employee/employee-view.css")
 //@RouteAlias(value = "", layout = MainView.class)
-public class EmployeeView extends Div {
+public class EmployeeGridProView extends Div {
 
 
 
@@ -72,7 +70,7 @@ public class EmployeeView extends Div {
 
 //    private Employee employee;
 
-    public EmployeeView(EmployeeCrudService service, DepartmentRepository departmentRepository) {
+    public EmployeeGridProView(EmployeeCrudService service, DepartmentRepository departmentRepository) {
         setId("employee-view");
 
         this.getStyle().set("display", "grid"); // why??
@@ -88,23 +86,33 @@ public class EmployeeView extends Div {
         grid.setDataProvider(dataProvider);
 //        grid.setDataProvider(new CrudServiceDataProvider<Employee,Void>(service));
 
-        grid.addEditColumn(Employee::getFirstName).text(Employee::setFirstName).setHeader("First name");
-        grid.addEditColumn(Employee::getEmail).text(Employee::setEmail).setHeader("Email");
 
-        // TODO add combo for Department
-        //        grid
-//                .addEditColumn(employee -> employee.getDepartment().getDepartmentName())
-//                .select((item, newValue) -> {
-//                   service.getRepository().fi
-//                    item.setDepartment(newValue);
-//                }, departmentRepository.findDistinctByDepartmentName().stream().map(Department::getDepartmentName).collect(Collectors.toList()))
-//                .setHeader("Department");
-        grid.addColumn(employee -> employee.getDepartment().getDepartmentName()).setHeader("Department name"); // TODO editable
+        grid.addEditColumn(Employee::getFirstName, "firstName") // get text from, sort field
+                .text(Employee::setFirstName) // where to put new text
+                .setHeader("First name"); // visible header text
+        grid.addEditColumn(Employee::getEmail, "email")
+                .text(Employee::setEmail)
+                .setHeader("Email");
+
+        //  Department
+        grid
+                .addEditColumn(employee -> employee.getDepartment().getDepartmentName(), "employee.department.departmentName")
+                .select((department, departmentName) -> {
+                    final Optional<Department> optional = departmentRepository.findByDepartmentName(departmentName);
+                    optional.ifPresent(department::setDepartment);
+                }, departmentRepository.findAll().stream()
+                        .map(Department::getDepartmentName)
+                        .collect(Collectors.toList()))
+                .setHeader("Department");
+
+//        grid.addColumn(employee -> employee.getDepartment().getDepartmentName()).setHeader("Department name");
 
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
         grid.setWidthFull();
+
+        grid.setDetailsVisibleOnClick(true);
 
         grid.addItemPropertyChangedListener(e -> {
             service.update(e.getItem());

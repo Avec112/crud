@@ -8,18 +8,17 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 import io.avec.crud.main.MainView;
 import org.vaadin.crudui.crud.CrudOperation;
 import org.vaadin.crudui.crud.impl.GridCrud;
 
 //@RouteAlias(value = "", layout = MainView.class)
-@Route(value = "department2", layout = MainView.class)
-@PageTitle("Department")
+@Route(value = "department-crudui", layout = MainView.class)
+@PageTitle("Department Crud(ui)")
 @CssImport("./styles/views/department/department-view.css")
-public class Department2View extends Div {
+public class DepartmentCrudView extends Div {
 
-    public Department2View(DepartmentRepository departmentRepository) {
+    public DepartmentCrudView(DepartmentRepository departmentRepository) {
         setId("department-view");
 
         GridCrud<Department> crud = new GridCrud<>(Department.class);

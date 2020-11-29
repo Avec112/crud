@@ -8,7 +8,7 @@ import org.vaadin.artur.helpers.CrudService;
 @Service
 public class EmployeeCrudService extends CrudService<Employee, Integer> {
 
-    private EmployeeRepository repository;
+    private final EmployeeRepository repository;
 
     public EmployeeCrudService(EmployeeRepository repository) {
         this.repository = repository;
