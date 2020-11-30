@@ -26,49 +26,7 @@ public class EmployeeGridProView extends Div {
 
 
 
-//    public EmployeeView(EmployeeCrudService service) {
-//        setId("employee-view");
-//
-//        Crud<Employee> crud = new Crud<>(Employee.class, createPersonEditor());
-//
-//
-//        crud.setDataProvider(new CrudServiceDataProvider<Employee,Void>(service));
-//        crud.addSaveListener(e -> service.update(e.getItem()));
-//        crud.addDeleteListener(e -> service.delete(e.getItem().getId()));
-//        crud.getGrid().setColumns("id", "firstName", "email", "department.departmentName");
-//        crud.getGrid().removeColumnByKey("id");
-//        crud.addThemeVariants(CrudVariant.NO_BORDER);
-//        add(crud);
-//    }
 
-//    private CrudEditor<Employee> createPersonEditor() {
-//
-//        FormLayout formLayout = new FormLayout();
-//        TextField firstName = new TextField("First name");
-//        TextField email = new TextField("Email");
-//        ComboBox<Department> departmentComboBox = new ComboBox<>("Department");
-//        formLayout.add(firstName, email, departmentComboBox);
-//
-//        Binder<Employee> binder = new Binder<>(Employee.class);
-//        binder.bind(firstName, Employee::getFirstName, Employee::setFirstName);
-//        binder.bind(email, Employee::getEmail, Employee::setEmail);
-//        binder.bind(departmentComboBox,Employee::getDepartment, Employee::setDepartment);
-//
-//
-//        return new BinderCrudEditor<>(binder, formLayout);
-//    }
-
-//    private final GridPro<Employee> grid = new GridPro<>(Employee.class);
-
-//    private final TextField firstName = new TextField("First name");
-//    private final TextField email = new TextField("Email");
-
-//    private final Button cancel = new Button("Cancel");
-//    private final Button save = new Button("Save");
-
-//    private final BeanValidationBinder<Employee> binder = new BeanValidationBinder<>(Employee.class);
-
-//    private Employee employee;
 
     public EmployeeGridProView(EmployeeCrudService service, DepartmentRepository departmentRepository) {
         setId("employee-view");

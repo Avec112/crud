@@ -22,6 +22,7 @@ import com.vaadin.flow.theme.lumo.Lumo;
 import io.avec.crud.department.DepartmentCrudView;
 import io.avec.crud.department.DepartmentGridProView;
 import io.avec.crud.employee.EmployeeCrudView;
+import io.avec.crud.employee.EmployeeGridProView2;
 import io.avec.crud.employee.EmployeeGridProView;
 
 import java.util.Optional;
@@ -89,6 +90,7 @@ public class MainView extends AppLayout {
                 createTab("Department (GridPro)", DepartmentGridProView.class),
                 createTab("Department (Crud-crudui)", DepartmentCrudView.class),
                 createTab("Employee (GridPro)", EmployeeGridProView.class),
+                createTab("Employee (GridPro) 2", EmployeeGridProView2.class),
                 createTab("Employee (Crud)", EmployeeCrudView.class)
         };
     }

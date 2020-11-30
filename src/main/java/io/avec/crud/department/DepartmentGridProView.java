@@ -23,7 +23,7 @@ import org.vaadin.artur.helpers.CrudServiceDataProvider;
 
 import java.util.Optional;
 
-@RouteAlias(value = "", layout = MainView.class)
+//@RouteAlias(value = "", layout = MainView.class)
 @Route(value = "department-grid", layout = MainView.class)
 @PageTitle("Department GridPro")
 @CssImport("./styles/views/department/department-view.css")
