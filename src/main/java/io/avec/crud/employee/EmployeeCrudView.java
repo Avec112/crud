@@ -22,6 +22,7 @@ import io.avec.crud.department.Department;
 import io.avec.crud.department.DepartmentRepository;
 import io.avec.crud.main.MainView;
 import lombok.extern.slf4j.Slf4j;
+import org.vaadin.artur.helpers.CrudServiceDataProvider;
 
 import java.lang.reflect.Field;
 import java.util.Comparator;
@@ -51,19 +52,20 @@ public class EmployeeCrudView extends Div {
         Crud<Employee> crud = new Crud<>(Employee.class, createPersonEditor()); // receives internal grid
 
         // Column ordering (will loose filter/sort)
-//        crud.getGrid().setColumns("id", "firstName", "email", "department.departmentName"); // filter/sort will not work, but i get column ordering
+        // todo try with and without
+        crud.getGrid().setColumns("id", "firstName", "email", "department.departmentName"); // filter/sort will not work, but i get column ordering
 
         // provider
-        final EmployeeDataProvider provider = new EmployeeDataProvider(service.getRepository()); // todo sizeChangeListener???
-//        final CrudServiceDataProvider<Employee, CrudFilter> provider = new CrudServiceDataProvider<>(service); // todo filtering does not work!
+        // todo try both to se difference with and without setColumns
+//        final EmployeeDataProvider provider = new EmployeeDataProvider(service.getRepository()); // todo sizeChangeListener???
+        final CrudServiceDataProvider<Employee, CrudFilter> provider = new CrudServiceDataProvider<>(service); // todo filtering does not work!
         crud.setDataProvider(provider);
 
+        crud.getGrid().removeColumnByKey("id"); // hide column
 
         // events
         crud.addSaveListener(e -> service.update(e.getItem()));
 //        crud.addDeleteListener(e -> service.delete(e.getItem().getId()));
-
-        crud.getGrid().removeColumnByKey("id"); // hide column
 
         // looks
         crud.addThemeVariants(CrudVariant.NO_BORDER);
