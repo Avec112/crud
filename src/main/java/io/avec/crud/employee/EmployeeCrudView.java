@@ -1,10 +1,13 @@
 package io.avec.crud.employee;
 
+import com.vaadin.flow.component.Html;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.crud.*;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -43,22 +46,32 @@ public class EmployeeCrudView extends Div {
 
     private final DepartmentRepository departmentRepository;
 
+    /*
+     Best combination is
+     - setColumns
+     - CrudServiceDataProvider
+
+     Will not get filtering, but sorting will work and you get control over column ordering.
+     */
     public EmployeeCrudView(EmployeeCrudService service, DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
         setId("employee-view");
+        add(new Html("<p><b>Note!<b/> This does not work as intended.</p>"));
+        add(new Paragraph(new Anchor("https://github.com/vaadin/vaadin-flow-components/issues/466", "Vaadin issue #466")));
 
 //        CrudGrid<Employee> crudGrid = new CrudGrid<>(Employee.class, true);
 //        Crud<Employee> crud = new Crud<>(Employee.class, crudGrid, createPersonEditor()); // provide grid
         Crud<Employee> crud = new Crud<>(Employee.class, createPersonEditor()); // receives internal grid
 
-        // Column ordering (will loose filter/sort)
+        // Column ordering (will loose filter)
         // todo try with and without
         crud.getGrid().setColumns("id", "firstName", "email", "department.departmentName"); // filter/sort will not work, but i get column ordering
+//        crud.getGrid().setColumns("id", "firstName", "email", "department"); // filter/sort will not work, but i get column ordering
 
         // provider
         // todo try both to se difference with and without setColumns
-//        final EmployeeDataProvider provider = new EmployeeDataProvider(service.getRepository()); // todo sizeChangeListener???
-        final CrudServiceDataProvider<Employee, CrudFilter> provider = new CrudServiceDataProvider<>(service); // todo filtering does not work!
+//        final EmployeeDataProvider provider = new EmployeeDataProvider(service.getRepository()); // todo sizeChangeListener??? Together with setColumns sorting department will give exception
+        final CrudServiceDataProvider<Employee, CrudFilter> provider = new CrudServiceDataProvider<>(service); // todo filtering does not work! with or without setColumns
         crud.setDataProvider(provider);
 
         crud.getGrid().removeColumnByKey("id"); // hide column
