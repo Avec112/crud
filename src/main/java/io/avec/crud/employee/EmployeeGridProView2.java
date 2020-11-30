@@ -1,5 +1,6 @@
 package io.avec.crud.employee;
 
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
@@ -11,7 +12,10 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.renderer.Renderer;
+import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import com.vaadin.flow.function.ValueProvider;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
@@ -33,40 +37,46 @@ import java.util.stream.Collectors;
 @RouteAlias(value = "", layout = MainView.class)
 public class EmployeeGridProView2 extends Div {
 
+    private final String firstNameHeader = "First name";
+    private final String emailHeader = "Email";
+    private final String departmentHeader = "Department";
+
+    private final DepartmentRepository departmentRepository;
+    private Grid.Column<Employee> firstNameColumn;
+    private Grid.Column<Employee> emailColumn;
+    private Grid.Column<Employee> departmentColumn;
+
+    private Employee lastOpenedDetailsEmployee = null;
+    private final GridPro<Employee> grid = new GridPro<>();
+    private final ListDataProvider<Employee> dataProvider;
+    private HeaderRow filterRow;
+
 
     public EmployeeGridProView2(EmployeeCrudService service, DepartmentRepository departmentRepository) {
+        this.departmentRepository = departmentRepository;
         setId("employee-view");
-
         Paragraph paragraph = new Paragraph("You can edit inside every cell. Database will be updated automatically.");
+        Checkbox editableCheckbox = new Checkbox("Edit modus");
 
-        GridPro<Employee> grid = new GridPro<>();
+
+//        GridPro<Employee> grid = new GridPro<>();
+//        GridPro<Employee> grid = new GridPro<>(Employee.class);
         grid.getStyle().set("position", "fixed"); // again why?
 //        grid.setMultiSort(true); // multi sort columns
 
-        VerticalLayout layout = new VerticalLayout(paragraph, grid);
+        VerticalLayout layout = new VerticalLayout(paragraph, new Div(editableCheckbox), new Div(grid));
         layout.setSizeFull();
+        layout.setPadding(false);
+        layout.setMargin(false);
         add(layout);
 
-        ListDataProvider<Employee> dataProvider = new ListDataProvider<>(service.getRepository().findAll());
+        dataProvider = new ListDataProvider<>(service.getRepository().findAll());
         grid.setDataProvider(dataProvider);
 
 
-        Grid.Column<Employee> firstNameColumn = grid.addEditColumn(Employee::getFirstName, "firstName") // get text from, sort field
-                .text(Employee::setFirstName) // where to put new text
-                .setHeader("First name"); // visible header text
-        Grid.Column<Employee> emailColumn = grid.addEditColumn(Employee::getEmail, "email")
-                .text(Employee::setEmail)
-                .setHeader("Email");
-
-        //  Department
-        Grid.Column<Employee> departmentColumn = grid.addEditColumn(employee -> employee.getDepartment().getDepartmentName(), "employee.department.departmentName")
-                .select((department, departmentName) -> {
-                    final Optional<Department> optional = departmentRepository.findByDepartmentName(departmentName);
-                    optional.ifPresent(department::setDepartment);
-                }, departmentRepository.findAll().stream()
-                        .map(Department::getDepartmentName)
-                        .collect(Collectors.toList()))
-                .setHeader("Department");
+        // default edit mode
+        editableCheckbox.setValue(true);
+        addEditColumns(grid);
 
 
         grid.getColumns().forEach(column -> column.setAutoWidth(true));
@@ -74,23 +84,83 @@ public class EmployeeGridProView2 extends Div {
         grid.setHeightFull();
         grid.setWidthFull();
 
-        grid.setDetailsVisibleOnClick(true);
-
         grid.addItemPropertyChangedListener(e -> {
             service.update(e.getItem());
             Notification.show("Change stored.", 3000, Notification.Position.TOP_CENTER);
         });
 
 
-        addFilters(grid, dataProvider, firstNameColumn, emailColumn, departmentColumn);
+        filterRow = addFilters();
 
+//        grid.setSingleCellEdit(false);
+        grid.addItemClickListener(e -> {
+            lastOpenedDetailsEmployee = e.getItem();
+            Notification.show("Viewing " + lastOpenedDetailsEmployee.getFirstName() + " details.");
+            //grid.setDetailsVisible(employeeItemClickEvent.getItem(), true);
+        });
 
+        grid.setDetailsVisibleOnClick(false);
+//        grid.setSelectionMode(Grid.SelectionMode.NONE);
+        grid.setItemDetailsRenderer(TemplateRenderer.<Employee>of("""
+                <div style='border: 1px solid gray; padding: 10px; width: 100%; box-sizing: border-box;'>
+                    <div>Hi! My name is <b>[[item.firstName]]!</b></div>
+                </div>""")
+                .withProperty("firstName", Employee::getFirstName)
+                .withEventHandler("handleClick", employee -> grid.getDataProvider().refreshItem(employee))
+
+        );
+
+        editableCheckbox.addValueChangeListener(e -> {
+
+//            grid.removeColumns(firstNameColumn, emailColumn, departmentColumn);
+            grid.removeAllColumns();
+            grid.getHeaderRows().remove(filterRow);
+            boolean isEditModus = e.getValue();
+            if(isEditModus) {
+                if(lastOpenedDetailsEmployee != null) {
+                    grid.setDetailsVisible(lastOpenedDetailsEmployee, false);
+                }
+                grid.setDetailsVisibleOnClick(false);
+                addEditColumns(grid);
+                addFilters();
+                Notification.show("Edit modus enabled.");
+            } else {
+                // Now we can view details
+                firstNameColumn = grid.addColumn(Employee::getFirstName, "firstName")
+                        .setHeader(firstNameHeader);
+                emailColumn = grid.addColumn(Employee::getEmail, "email")
+                        .setHeader(emailHeader);
+                departmentColumn = grid.addColumn(employee ->
+                        employee.getDepartment().getDepartmentName(), "employee.department.departmentName")
+                        .setHeader(departmentHeader);
+                grid.setDetailsVisibleOnClick(true);
+                Notification.show("Click a row for details.");
+            }
+            addFilters();
+        });
     }
 
-    private void addFilters(GridPro<Employee> grid, ListDataProvider<Employee> dataProvider,
-                            Grid.Column<Employee> firstNameColumn,
-                            Grid.Column<Employee> emailColumn,
-                            Grid.Column<Employee> departmentColumn) {
+    private void addEditColumns(GridPro<Employee> grid) {
+
+        firstNameColumn = grid.addEditColumn(Employee::getFirstName, "firstName") // get text from, sort field
+                .text(Employee::setFirstName) // where to put new text
+                .setHeader(firstNameHeader); // visible header text
+        emailColumn = grid.addEditColumn(Employee::getEmail, "email")
+                .text(Employee::setEmail)
+                .setHeader(emailHeader);
+
+        //  Department
+        departmentColumn = grid.addEditColumn(employee -> employee.getDepartment().getDepartmentName(), "employee.department.departmentName")
+                .select((department, departmentName) -> {
+                    final Optional<Department> optional = departmentRepository.findByDepartmentName(departmentName);
+                    optional.ifPresent(department::setDepartment);
+                }, departmentRepository.findAll().stream()
+                        .map(Department::getDepartmentName)
+                        .collect(Collectors.toList()))
+                .setHeader(departmentHeader);
+    }
+
+    private HeaderRow addFilters() {
         HeaderRow filterRow = grid.appendHeaderRow();
 
         // First filter
@@ -128,6 +198,7 @@ public class EmployeeGridProView2 extends Div {
         filterRow.getCell(departmentColumn).setComponent(departmentField);
 //        departmentField.setSizeFull();
         departmentField.setPlaceholder("Filter");
+        return filterRow;
     }
 
 
